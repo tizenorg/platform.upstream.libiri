@@ -6,6 +6,7 @@ Summary:	An IRI parsing library
 Url:		http://code.google.com/p/libiri/
 Group:		System/Libraries
 Source:		%{name}-%{version}.tar.gz
+Source1001: %{name}.manifest
 BuildRequires:	autoconf
 BuildRequires:  automake
 BuildRequires:  libtool
@@ -32,6 +33,7 @@ libiri is a simple toolkit for parsing Internationalized Resource Identifiers (I
 
 %prep
 %setup -q
+cp %{S:1001} .
 
 %build
 sh ./autogen.sh
