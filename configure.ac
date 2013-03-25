@@ -67,6 +67,7 @@ libiri/Makefile
 iri-config/iri-config.c
 iri-config/Makefile
 tests/Makefile
+libiri.pc
 ])
 
 AC_OUTPUT
