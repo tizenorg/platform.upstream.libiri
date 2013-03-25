@@ -30,4 +30,7 @@
 
 SUBDIRS = iri-config include libiri tests
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libiri.pc
+
 EXTRA_DIST = LICENSE
