@@ -1,7 +1,7 @@
 Name:       libiri
 Version:	1.1
 Release:	1
-License:	BSD
+License:	BSD-3-Clause
 Summary:	An IRI parsing library
 Url:		http://code.google.com/p/libiri/
 Group:		System/Libraries
@@ -47,6 +47,7 @@ make %{?_smp_mflags}
 
 %files
 %manifest libiri.manifest
+%license LICENSE
 %{_libdir}/*.so
 
 
