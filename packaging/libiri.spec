@@ -46,12 +46,13 @@ make %{?_smp_mflags}
 
 
 %files
-%manifest libiri.manifest
+%manifest %{name}.manifest
 %license LICENSE
 %{_libdir}/*.so
 
 
 %files devel
+%manifest %{name}.manifest
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/*.h
 /usr/bin/iri-config
