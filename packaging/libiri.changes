@@ -1,3 +1,6 @@
+* Mon Jul 08 2013 Baptiste DURAND <baptiste.durand@eurogiciel.fr> accepted/tizen/20130520.095911@b91a2d8
+- Fix memory corruption.
+
 * Thu Apr 04 2013 Anas Nashif <anas.nashif@intel.com> b334247
 - Initial import
 
