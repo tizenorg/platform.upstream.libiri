@@ -33,6 +33,8 @@
 #ifndef P_LIBIRI_H_
 # define P_LIBIRI_H_                   1
 
+#define LIBIRI_INTERNAL
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

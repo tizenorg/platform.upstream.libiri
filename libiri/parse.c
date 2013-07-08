@@ -59,6 +59,7 @@ iri__hexnibble(char c)
 	{
 		return c - 'a' + 10;
 	}
+	return 0;
 }
 
 static inline const char *
@@ -109,27 +110,82 @@ iri__allocbuf(const char *src, size_t *len)
 {
 	size_t sc;
 	const char *p, *c;
-	
-	/* Calculate the size of the buffer required to hold a decoded version of
-	 * src, including enough breathing space for null bytes.
-	 */
-	/* XXX: This is way too much; we need to actually count it */
-	*len = (strlen(src) * 4) + 16;
-	/* Determine how much space we need for the scheme list */
+/*
+	Internal format of IRI structure is very hard to understand at first.
+	The buffer is used to store character strings with every parsed part of
+	IRI, like host, user, auth, path etc. Start of every character string is
+	ALIGNED to ALIGNMENT value and finished with NULL byte.
+	Above that, the buffer is used to keep variable size array of parsed
+	scheme parts. It consist of the array of addresses pointing to starts
+	of scheme parts which are kept as all other characters strings, so are
+	aligned to ALIGMENT and ended with NULL byte.
+	This function calculates approximation of buffer size to store all the
+	data of parser IRI.
+
+	Fully filled buffer with scheme parts looks as follows:
+	0. start of the buffer
+	1. aligned start of the scheme part with added NULL byte
+	2. aligned start of the user part with added NULL byte
+	3. aligned start of the password part with added NULL byte
+	4. aligned start of the array of size schemes_number+1 of pointers that point
+	   to consecutive scheme part character strings (last one is NULL)
+	   schemes_number is a number of scheme tokens delimited with + sign in
+	   scheme part
+	5. schems_number of characters strings of scheme parts each of which
+	   aligned and finished with NULL byte.
+	6. aligned start of the host part with added NULL byte
+	7. aligned start of the path part with added NULL byte
+	8. aligned start of the query part with added NULL byte
+	9. aligned start of the anchor part with added NULL byte
+
+	There can be indentified 4 kinds of characters in IRI:
+	- characters which are copied one to one (i.e. letters)
+	- characters which are removed (special characters like comma in scheme)
+	- characters which are replaced with other characers where buffer grows
+	  this only happens with scheme part
+	- characters which are replaced with other characers where buffer decreases
+
+	Alighning a pointer in worst case will advance a buffer pointers
+	ALIGNMENT-1 bytes
+
+	Knowing all that we can count an approximation of buffer size which can
+	be trusted that whole parsed IRI content will fit in.
+*/
+
+/* first approximation - all characers will have to be stored in buffer */
+	*len = strlen(src);
+
+/* second approximation - IRI has all possible parts which have to be
+ * aligned to ALIGNMENT and have NULL byte an the end. There are 7 different
+ * parts like that */
+	*len += 7 * (ALIGNMENT-1 + 1);
+
+/* third approximation - we have to make a room for scheme parts array.
+ * Because the array has an aligned array of n + 1 pointers and n
+ * characters strings aligned and NULL byte terminated.
+ */
 	if(NULL != (c = strchr(src, ':')))
 	{
 		sc = 1;
 		for(p = src; p < c; p++)
 		{
-			if(*p == '+')
+		if(*p == '+')
 			{
 				sc++;
 			}
 		}
-		/* Ensure we can align each element on an 8-byte boundary */
-		*len = (src - c) + 1 + sc + ((sc + 1) * (sizeof(char *) + 7));
-		*len += (7 * 11);
-	}
+		/* fourth approximation - all characters of scheme part will be stored
+		 * in scheme parts tokens */
+		*len += (c - src);
+
+		/* fifth approximation - Ensure we can align each element on an
+		 * ALIGNMENT byte boundary and append NULL byte */
+		*len += sc * (ALIGNMENT-1 + 1);
+
+		/* sixth approximation - Ensure we have a room for aligned array
+		 * indexes */
+		*len += ALIGNMENT-1 + (sc + 1) * (sizeof(char*)/sizeof(char));
+    }
 	return (char *) calloc(1, *len);
 }
 
