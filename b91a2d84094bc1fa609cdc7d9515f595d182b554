@@ -1,0 +1,12 @@
+Change-Id: Ib91a2d84094bc1fa609cdc7d9515f595d182b554
+Code-Review+2: Rusty Lynch <rusty.lynch@intel.com>
+Verified+1: Rusty Lynch <rusty.lynch@intel.com>
+Code-Review+1: Baptiste DURAND <baptiste.durand@eurogiciel.fr>
+Verified+1: Baptiste DURAND <baptiste.durand@eurogiciel.fr>
+Code-Review+1: Xavier Roche <xavier.roche@eurogiciel.fr>
+Verified+1: Xavier Roche <xavier.roche@eurogiciel.fr>
+Submitted-by: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-at: Tue, 09 Jul 2013 16:18:05 -0700
+Reviewed-on: https://review.tizen.org/gerrit/5554
+Project: platform/upstream/libiri
+Branch: refs/heads/tizen
