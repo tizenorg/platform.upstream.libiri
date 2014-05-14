@@ -1,6 +1,6 @@
 Name:       libiri
 Version:	1.1
-Release:	1
+Release:    0
 License:	BSD-3-Clause
 Summary:	An IRI parsing library
 Url:		http://code.google.com/p/libiri/
@@ -36,13 +36,11 @@ libiri is a simple toolkit for parsing Internationalized Resource Identifiers (I
 cp %{S:1001} .
 
 %build
-sh ./autogen.sh
-%configure
+%reconfigure
 make %{?_smp_mflags}
 
 %install
 %make_install
-
 
 
 %files
