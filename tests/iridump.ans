@@ -1,0 +1,12 @@
+Colon occurs before at
+Found user
+  scheme: abc
+       0: abc
+    user: username
+    auth: (null)
+password: password
+    host: example.com
+    port: 123
+    path: /path/data
+   query: key=value
+  anchor: #fragid1

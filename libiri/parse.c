@@ -194,7 +194,7 @@ iri_parse(const char *src)
 {
 	iri_t *p;
 	char *bufstart, *endp, *bufp, **sl;
-	const char *at, *colon, *slash, *t;
+    const char *at, *colon, *slash, *t, *slash3rd;
 	size_t buflen, sc, cp;
 	
 	if(NULL == (p = (iri_t *) calloc(1, sizeof(iri_t))))
@@ -216,6 +216,24 @@ iri_parse(const char *src)
 		/* We can disregard the colon if a slash appears before it */
 		colon = NULL;
 	}
+    // "@" is valid character in hierarchical part of IRI
+    if(slash && colon && (colon[1] != '/' || colon[2] != '/'))
+    {
+        //if scheme not suffixed with ://, there is not autority
+        //therefore autority(and user within) is not set
+        at = NULL;
+    }
+    else if(at && slash && slash[1] && slash[2])
+    {
+        slash3rd = strchr(slash + 2, '/');
+        //here we know scheme suffix is "://" so autority can exist
+        //3rd slash should match start of hierarchical part if exists
+        //@ after that is valid character
+        if(slash3rd && slash3rd < at)
+        {
+            at = NULL;
+        }
+    }
 	if(colon && !at)
 	{
 		/* Definitely a scheme */
