@@ -1,6 +1,12 @@
+%define run_tests 0
+%if %{run_tests}
+    # check is defined off at .rpmmacros file.
+    %undefine check
+%endif
+
 Name:       libiri
 Version:    1.1
-Release:    0
+Release:    1
 License:    BSD-3-Clause
 Summary:    An IRI parsing library
 Url:        http://code.google.com/p/libiri/
@@ -38,6 +44,13 @@ cp %{S:1001} .
 %build
 %reconfigure
 make %{?_smp_mflags}
+
+%check
+%if %{run_tests}
+    %__make check || exit 0
+    chmod +x ./run_test.sh
+    ./run_test.sh %{name} %{version}
+%endif
 
 %install
 %make_install

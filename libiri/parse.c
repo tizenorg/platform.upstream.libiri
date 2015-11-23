@@ -18,15 +18,15 @@
  * or promote products derived from this software without specific prior
  * written permission.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, 
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
  * AUTHORS OF THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
  * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -76,7 +76,7 @@ static inline const char *
 iri__copychar_decode(char **dest, const char *src, int convert_space)
 {
 	unsigned char *p = (unsigned char *) (*dest);
-	
+
 	if(1 == convert_space && '+' == *src)
 	{
 		**dest = ' ';
@@ -194,9 +194,9 @@ iri_parse(const char *src)
 {
 	iri_t *p;
 	char *bufstart, *endp, *bufp, **sl;
-	const char *at, *colon, *slash, *t;
+    const char *at, *colon, *slash, *t, *slash3rd;
 	size_t buflen, sc, cp;
-	
+
 	if(NULL == (p = (iri_t *) calloc(1, sizeof(iri_t))))
 	{
 		return NULL;
@@ -216,6 +216,24 @@ iri_parse(const char *src)
 		/* We can disregard the colon if a slash appears before it */
 		colon = NULL;
 	}
+    // "@" is valid character in hierarchical part of IRI
+    if(slash && colon && (colon[1] != '/' || colon[2] != '/'))
+    {
+        //if scheme not suffixed with ://, there is not autority
+        //therefore autority(and user within) is not set
+        at = NULL;
+    }
+    else if(at && slash && slash[1] && slash[2])
+    {
+        slash3rd = strchr(slash + 2, '/');
+        //here we know scheme suffix is "://" so autority can exist
+        //3rd slash should match start of hierarchical part if exists
+        //@ after that is valid character
+        if(slash3rd && slash3rd < at)
+        {
+            at = NULL;
+        }
+    }
 	if(colon && !at)
 	{
 		/* Definitely a scheme */
@@ -438,7 +456,7 @@ iri_parse(const char *src)
 	if(*src == '#')
 	{
 		bufp = ALIGN(bufp);
-		p->iri.anchor = bufp; 
+		p->iri.anchor = bufp;
 		while(*src)
 		{
 			src = iri__copychar_decode(&bufp, src, 0);
@@ -450,7 +468,7 @@ iri_parse(const char *src)
 	{
 		/* Still stuff left? It must be a path... of sorts */
 		bufp = ALIGN(bufp);
-		p->iri.path = bufp; 
+		p->iri.path = bufp;
 		while(*src && *src != '?' && *src != '#')
 		{
 			src = iri__copychar_decode(&bufp, src, 0);
