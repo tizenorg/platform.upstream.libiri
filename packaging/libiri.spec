@@ -7,7 +7,7 @@
 Name:       libiri
 Version:    1.1
 Release:    1
-License:    BSD-3-Clause
+License:    BSD-2.0
 Summary:    An IRI parsing library
 Url:        http://code.google.com/p/libiri/
 Group:      System/Libraries
